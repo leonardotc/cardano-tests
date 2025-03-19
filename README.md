@@ -5,6 +5,11 @@ docker run --rm -v $HOME/receive-ada-sample/keys:/data ghcr.io/intersectmbo/card
 ```
 
 ```
+docker run --rm -v $HOME/policy:/policy -v $HOME/cardano/testnet:/testnet -v $HOME/cardano/testnet:/testnet ghcr.io/intersectmbo/cardano-node:10.2.1 cli address key-gen --verification-key-file policy/policy.vkey --signing-key-file policy/policy.skey
+
+```
+
+```
 docker run --rm -v $HOME/receive-ada-sample/keys:/data ghcr.io/intersectmbo/cardano-node:10.2.1 cli address build --payment-verification-key-file /data/payment.vkey --out-file /data/payment.addr --testnet-magic 1097911063
 ```
 
@@ -16,4 +21,11 @@ docker run --rm -v $HOME/receive-ada-sample/keys:/data -v $HOME/cardano/testnet:
 docker run --rm -p 1337:1337 -v $HOME/receive-ada-sample/keys:/data -v $HOME/cardano/testnet:/testnet ghcr.io/intersectmbo/cardano-node:10.2.1 run --config /testnet/config.json --database-path /testnet/db/ --socket-path /testnet/db/node.socket --host-addr 0.0.0.0 --port 1337 --topology /testnet/topology.json
 ```
 
-cardano-node run --config /testnet/config.json --database-path /testnet/db/ --socket-path /testnet/db/node.socket --host-addr 127.0.0.1 --port 1337
+```
+docker run --rm -p 1337:1337 -v $HOME/receive-ada-sample/keys:/data -v $HOME/cardano/testnet:/testnet ghcr.io/intersectmbo/cardano-node:10.2.1 run address key-gen --verification-key-file policy/policy.vkey --signing-key-file policy/policy.skey
+```
+
+echo "{" > policy/policy.script 
+echo "  \"keyHash\": \"$(cardano-cli address key-hash --payment-verification-key-file policy/policy.vkey)\"," >> policy/policy.script 
+echo "  \"type\": \"sig\"" >> policy/policy.script 
+echo "}" >> policy/policy.script
